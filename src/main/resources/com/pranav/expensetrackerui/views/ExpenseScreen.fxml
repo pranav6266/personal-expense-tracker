@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXComboBox?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+
+<VBox spacing="20" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.pranav.expensetrackerui.controllers.ExpenseScreenController"
+      styleClass="expense-form">
+
+    <!-- First Row: Expense Type and Date -->
+    <HBox spacing="20" styleClass="hbox-centered">
+        <MFXComboBox fx:id="expenseTypeDropdown" promptText="Expense Type" styleClass="dropdown-half" />
+        <DatePicker fx:id="datePicker" promptText="Select Date" styleClass="date-picker-half" />
+    </HBox>
+
+    <!-- Second Row: Amount and Category -->
+    <HBox spacing="20" styleClass="hbox-centered">
+        <MFXTextField fx:id="amountField" promptText="Enter Amount" styleClass="textfield-half" />
+        <MFXComboBox fx:id="categoryDropdown" promptText="Select Category" styleClass="dropdown-half" />
+    </HBox>
+
+    <!-- Third Row: Account and Note -->
+    <HBox spacing="20" styleClass="hbox-centered">
+        <MFXComboBox fx:id="accountDropdown" promptText="Select Account" styleClass="dropdown-half" />
+        <MFXTextField fx:id="noteField" promptText="Enter Note" styleClass="textfield-half" />
+    </HBox>
+
+    <!-- Submit Button centered -->
+    <HBox styleClass="hbox-centered">
+        <MFXButton fx:id="submitButton" text="Submit" onAction="#handleSubmit" styleClass="submit-button"/>
+    </HBox>
+</VBox>
