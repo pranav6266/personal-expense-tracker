@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
+
+<VBox alignment="CENTER" spacing="10" styleClass="loading-vbox">
+    <Text text="User Authenticated, loading screen..." styleClass="loading-text"/>
+</VBox>
