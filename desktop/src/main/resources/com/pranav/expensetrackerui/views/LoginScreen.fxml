@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
+<?import io.github.palexdev.materialfx.controls.MFXButton?>
+<?import io.github.palexdev.materialfx.controls.MFXTextField?>
+<?import io.github.palexdev.materialfx.controls.MFXPasswordField?>
+<?import javafx.scene.text.Text?>
+
+<VBox xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pranav.expensetrackerui.controllers.LoginController" spacing="15" alignment="CENTER" styleClass="login-vbox">
+    <Text text="Personal Expense Tracker" styleClass="login-heading"/>
+    <Text text="Enter your login credentials" styleClass="login-subheading"/>
+    <MFXTextField fx:id="usernameField" promptText="Enter your Username" styleClass="mfx-text-field"/>
+    <MFXPasswordField fx:id="passwordField" promptText="Enter your Password" styleClass="mfx-password-field"/>
+    <MFXButton text="Submit" fx:id="submitButton" onAction="#handleLogin" styleClass="mfx-button"/>
+    <HBox alignment="CENTER">
+        <Text text="Not registered? "/>
+        <Text text="Create an account" styleClass="link-text" onMouseClicked="#handleCreateAccount"/>
+    </HBox>
+</VBox>
