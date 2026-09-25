@@ -38,14 +38,16 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        http.
-                csrf(AbstractHttpConfigurer::disable)
+        // Enable CORS support so MVC CORS mappings are respected by Spring Security
+        http.cors().and()
+                .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz ->
                         authz.requestMatchers("/signup", "/login").permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .anyRequest().hasRole("USER")
+                                // Allow both USER and ADMIN roles to access non-admin endpoints
+                                .anyRequest().hasAnyRole("USER", "ADMIN")
                 )
                 .addFilterBefore(jwtAuthFilter,
                         UsernamePasswordAuthenticationFilter.class);

@@ -60,6 +60,8 @@ public class ExpenseServiceImpl implements ExpenseService{
 		Optional<AppUser> userOptional = userService.findUserById(userId);
 		if(userOptional.isPresent()){
 			AppUser user = userOptional.get();
+			// Ensure the incoming expense ID is null for new entities to avoid optimistic locking issues
+			expense.setId(null);
 			expense.setUser(user);
 			return expenseRepository.save(expense);
 		}else{

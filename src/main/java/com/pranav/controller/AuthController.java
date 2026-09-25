@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -17,9 +18,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final UserService userService;
 
-    public AuthController(AuthService authService) {
+    public AuthController(AuthService authService, UserService userService) {
         this.authService = authService;
+        this.userService = userService;
     }
 
 
@@ -41,5 +44,18 @@ public class AuthController {
         }else{
             return ResponseEntity.badRequest().body(response);
         }
+    }
+
+    @GetMapping("/auth/validate")
+    public ResponseEntity<?> validateToken(org.springframework.security.core.Authentication authentication){
+        if(authentication == null || !authentication.isAuthenticated()){
+            return ResponseEntity.status(401).body(java.util.Map.of("message","Unauthorized"));
+        }
+        String username = authentication.getName();
+        com.pranav.model.AppUser user = userService.findByUsername(username);
+        return ResponseEntity.ok(java.util.Map.of(
+                "username", username,
+                "role", user.getRole().name()
+        ));
     }
 }
