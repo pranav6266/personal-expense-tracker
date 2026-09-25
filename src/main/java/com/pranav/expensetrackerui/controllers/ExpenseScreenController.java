@@ -110,61 +110,56 @@ public class ExpenseScreenController {
 		// Get the JWT token from storage
 		String token = JwtStorageUtil.getToken();
 
-		if (isEditMode) {
+        boolean success = false;
+        if (isEditMode) {
 			System.out.println("Editing expense: ID=" + expenseId + ", Type=" + expenseType);
 
 			String path = "/expenses/" + expenseId;
 
 			// Make a PUT request to the API to update the expense
-			try {
-				HttpClientUtil.sendPutRequestWithToken(path, token, jsonBody);
+            try {
+                HttpClientUtil.sendPutRequestWithToken(path, token, jsonBody);
 
-				// After successful submission, refresh the main screen's expenses using the MainScreenController
-				if (mainScreenController != null) {
-					mainScreenController.refreshExpenses();  // Call the refreshExpenses method
-				}
+                // After successful submission, refresh the main screen's expenses using the MainScreenController
+                if (mainScreenController != null) {
+                    mainScreenController.refreshExpenses();  // Call the refreshExpenses method
+                }
+                success = true;
 
-			} catch (AuthenticationException e) {
-				handleAuthenticationFailure();
+            } catch (AuthenticationException e) {
+                handleAuthenticationFailure();
 
-			} catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-
-			} finally {
-				// Close the form window after submission
-				Stage stage = (Stage) submitButton.getScene().getWindow();
-				stage.close();
-			}
-		} else {
+            } catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        } else {
 			System.out.println("Adding new expense: Type=" + expenseType);
 			// Make a POST request to the API
 			String path = "/expenses";
 
 			// Call the HttpClientUtil to fetch expenses by date
-			try {
-				HttpClientUtil.sendPostRequestWithToken(path, token, jsonBody);
+            try {
+                HttpClientUtil.sendPostRequestWithToken(path, token, jsonBody);
 
-				// After successful submission, refresh the main screen's expenses using the MainScreenController
-				if (mainScreenController != null) {
-					mainScreenController.refreshExpenses();  // Call the refreshExpenses method
-				}
+                // After successful submission, refresh the main screen's expenses using the MainScreenController
+                if (mainScreenController != null) {
+                    mainScreenController.refreshExpenses();  // Call the refreshExpenses method
+                }
+                success = true;
 
-			} catch (AuthenticationException e) {
-				handleAuthenticationFailure();
-			}
-			catch (IOException | InterruptedException e) {
-				e.printStackTrace();
-			}
-			finally {
-				// Close the form window after submission
-				Stage stage = (Stage) submitButton.getScene().getWindow();
-				stage.close();
-			}
-		}
+            } catch (AuthenticationException e) {
+                handleAuthenticationFailure();
+            }
+            catch (IOException | InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
 
-		// Close the form window after submission
-		Stage stage = (Stage) submitButton.getScene().getWindow();
-		stage.close();
+        // Close the form window only if the operation succeeded
+        if (success) {
+            Stage stage = (Stage) submitButton.getScene().getWindow();
+            stage.close();
+        }
 	}
 
 	// Method to validate the form fields
@@ -243,4 +238,3 @@ public class ExpenseScreenController {
 		alert.showAndWait();
 	}
 }
-

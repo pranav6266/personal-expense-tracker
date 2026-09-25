@@ -1,6 +1,5 @@
 package com.pranav.expensetrackerui.utils;
 
-import com.google.gson.Gson;
 import com.pranav.expensetrackerui.exceptions.AuthenticationException;
 
 import java.io.IOException;
@@ -11,9 +10,25 @@ import java.net.http.HttpResponse;
 
 public class HttpClientUtil {
     private static final HttpClient client = HttpClient.newBuilder().build();
-    private static final Gson gson = new Gson();
 
-    private static final String baseUrl = "https://personal-expense-tracker-backend-production-a9ef.up.railway.app";
+    private static final String DEFAULT_BASE_URL = "http://localhost:8080";
+    private static final String baseUrl = resolveBaseUrl();
+
+    private static String resolveBaseUrl() {
+        String configuredUrl = System.getProperty("expense.api.baseUrl");
+
+        if (configuredUrl == null || configuredUrl.isBlank()) {
+            configuredUrl = System.getenv("EXPENSE_API_BASE_URL");
+        }
+
+        if (configuredUrl == null || configuredUrl.isBlank()) {
+            configuredUrl = DEFAULT_BASE_URL;
+        }
+
+        return configuredUrl.endsWith("/")
+                ? configuredUrl.substring(0, configuredUrl.length() - 1)
+                : configuredUrl;
+    }
 
 //    Method to send POST request with authorization.
     public static HttpResponse<String> sendPostRequest(String path, String jsonBody) throws IOException, InterruptedException {
@@ -39,8 +54,8 @@ public class HttpClientUtil {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        // If the response status code is 403, throw the custom AuthenticationException
-        if (response.statusCode() == 403) {
+        // If the response status code is 401 or 403, throw the custom AuthenticationException
+        if (response.statusCode() == 403 || response.statusCode() == 401) {
             throw new AuthenticationException("Session has expired. Please log in again.");
         }
 
@@ -64,15 +79,16 @@ public class HttpClientUtil {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        // If the response status code is 403, throw the custom AuthenticationException
-        if (response.statusCode() == 403) {
+        // If the response status code is 401 or 403, throw the custom AuthenticationException
+        if (response.statusCode() == 403 || response.statusCode() == 401) {
             throw new AuthenticationException("Session has expired. Please log in again.");
         }
 
-        if (response.statusCode() == 200) {
-            response.body();
+        // Accept 200 (OK) and 201 (CREATED) as successful POST responses
+        if (response.statusCode() == 200 || response.statusCode() == 201) {
+            return;
         } else {
-            throw new IOException("Failed to fetch data: " + response.statusCode());
+            throw new IOException("Failed to post data: " + response.statusCode());
         }
 
     }
@@ -88,8 +104,8 @@ public class HttpClientUtil {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        // If the response status code is 403, throw the custom AuthenticationException
-        if (response.statusCode() == 403) {
+        // If the response status code is 401 or 403, throw the custom AuthenticationException
+        if (response.statusCode() == 403 || response.statusCode() == 401) {
             throw new AuthenticationException("Session has expired. Please log in again.");
         }
 
@@ -111,8 +127,8 @@ public class HttpClientUtil {
 
         HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
 
-        // If the response status code is 403, throw the custom AuthenticationException
-        if (response.statusCode() == 403) {
+        // If the response status code is 401 or 403, throw the custom AuthenticationException
+        if (response.statusCode() == 403 || response.statusCode() == 401) {
             throw new AuthenticationException("Session has expired. Please log in again.");
         }
 

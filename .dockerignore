@@ -1,0 +1,7 @@
+.gradle
+.gradle-docker
+build
+.idea
+*.iml
+out
+target

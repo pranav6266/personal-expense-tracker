@@ -27,13 +27,20 @@ public class AuthService {
                 HttpResponse<String> response = HttpClientUtil.sendPostRequest(path, jsonBody);
 
                 AuthResponseDTO AuthResponseDTO = gson.fromJson(response.body(), AuthResponseDTO.class);
-                if ("SUCCESS".equals(AuthResponseDTO.getMessage())) {
+                // Ensure we have a success message and a non-null token before proceeding
+                if ("SUCCESS".equals(AuthResponseDTO.getMessage()) && AuthResponseDTO.getToken() != null) {
                     JwtStorageUtil.saveToken(AuthResponseDTO.getToken());
                     Platform.runLater(() -> navigateToMainScreen(stage));
                 } else {
-                    // Handle error case - e.g., show error message to the user
-                    System.out.println(AuthResponseDTO.getMessage());
-                    Platform.runLater(() -> showAlert("Signup Failed", AuthResponseDTO.getMessage()));
+                    // Determine proper error message
+                    String message = AuthResponseDTO.getMessage();
+                    if ("SUCCESS".equals(message) && AuthResponseDTO.getToken() == null) {
+                        message = "Invalid token received from server.";
+                        System.out.println("Signup returned SUCCESS but token was null.");
+                    }
+                    System.out.println(message);
+                    final String signupMsg = message;
+                    Platform.runLater(() -> showAlert("Signup Failed", signupMsg));
                 }
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();
@@ -51,13 +58,20 @@ public class AuthService {
                 HttpResponse<String> response = HttpClientUtil.sendPostRequest(path, jsonBody);
 
                 AuthResponseDTO AuthResponseDTO = gson.fromJson(response.body(), AuthResponseDTO.class);
-                if ("SUCCESS".equals(AuthResponseDTO.getMessage())) {
+                // Ensure we have a success message and a non-null token before proceeding
+                if ("SUCCESS".equals(AuthResponseDTO.getMessage()) && AuthResponseDTO.getToken() != null) {
                     JwtStorageUtil.saveToken(AuthResponseDTO.getToken());
                     Platform.runLater(() -> navigateToMainScreen(stage));
                 } else {
-                    // Handle error case - e.g., show error message to the user
-                    System.out.println(AuthResponseDTO.getMessage());
-                    Platform.runLater(() -> showAlert("Signup Failed", AuthResponseDTO.getMessage()));
+                    // Determine proper error message
+                    String message = AuthResponseDTO.getMessage();
+                    if ("SUCCESS".equals(message) && AuthResponseDTO.getToken() == null) {
+                        message = "Invalid token received from server.";
+                        System.out.println("Login returned SUCCESS but token was null.");
+                    }
+                    System.out.println(message);
+                    final String loginMsg = message;
+                    Platform.runLater(() -> showAlert("Login Failed", loginMsg));
                 }
             } catch (IOException | InterruptedException e) {
                 e.printStackTrace();

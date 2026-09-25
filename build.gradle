@@ -25,8 +25,14 @@ tasks.withType(JavaCompile) {
 }
 
 application {
-    mainModule = 'com.pranav.expensetrackerui'
+    mainModule = 'com.tutorialseu.expensetrackerui'
     mainClass = 'com.pranav.expensetrackerui.MainApp'
+}
+
+tasks.named('run') {
+    systemProperty 'expense.api.baseUrl',
+            System.getProperty('expense.api.baseUrl', 'http://localhost:8080')
+    systemProperty 'prism.order', System.getProperty('prism.order', 'sw')
 }
 
 javafx {
