@@ -1,0 +1,13 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:expenses;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+app:
+  jwt:
+    # Test-only key (base64 of 32 bytes)
+    secret: dGVzdC1vbmx5LWp3dC1zZWNyZXQta2V5LTMyLWJ5dGVzIQ==

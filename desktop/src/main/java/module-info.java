@@ -1,4 +1,4 @@
-module com.tutorialseu.expensetrackerui {
+module com.pranav.expensetrackerui {
     requires javafx.controls;
     requires javafx.fxml;
     requires com.google.gson;

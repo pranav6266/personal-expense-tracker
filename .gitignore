@@ -1,0 +1,17 @@
+# Secrets
+.env
+.env.*
+!.env.example
+
+# Build output
+build/
+.gradle/
+node_modules/
+dist/
+out/
+
+# IDE
+.idea/
+*.iml
+.vscode/
+.DS_Store

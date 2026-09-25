@@ -2,51 +2,62 @@ package com.pranav.utils;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @Component
 public class JWTUtil {
 
-    private final SecretKey SECRET_KEY = Jwts.SIG.HS256.key().build();
+    private static final Logger log = LoggerFactory.getLogger(JWTUtil.class);
 
-    // Method to generate a JWT token
+    private final SecretKey secretKey;
+    private final long expirationMs;
+
+    public JWTUtil(@Value("${app.jwt.secret:}") String secret,
+                   @Value("${app.jwt.expiration-ms:36000000}") long expirationMs) {
+        if (secret == null || secret.isBlank()) {
+            log.warn("JWT_SECRET is not set; using a random key. Tokens will be invalid after a restart.");
+            this.secretKey = Jwts.SIG.HS256.key().build();
+        } else {
+            this.secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        }
+        this.expirationMs = expirationMs;
+    }
+
     public String generateToken(String username) {
-        Map<String, Object> claims = new HashMap<>();
+        long now = System.currentTimeMillis();
         return Jwts.builder()
-                .claims(claims)
-                .subject(username)  // Setting the username as the subject of the token
-                .issuedAt(new Date(System.currentTimeMillis()))  // Token creation time
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10))  // 10-hour validity
-                .signWith(SECRET_KEY)  // Signing the token with the secret key
+                .subject(username)
+                .issuedAt(new Date(now))
+                .expiration(new Date(now + expirationMs))
+                .signWith(secretKey)
                 .compact();
     }
 
-    // Method to extract the username from the JWT token
     public String extractUsername(String token) {
-        return extractAllClaims(token).getSubject();  // The subject field contains the username
+        return extractAllClaims(token).getSubject();
     }
 
-    // Method to extract all claims from the token
     private Claims extractAllClaims(String token) {
         return Jwts.parser()
-                .verifyWith(SECRET_KEY)  // Use the secret key to verify the signature
+                .verifyWith(secretKey)
                 .build()
-                .parseSignedClaims(token)  // Parse the claims JWS from the token
+                .parseSignedClaims(token)
                 .getPayload();
     }
 
-    // Method to validate the JWT token by checking the username and expiration
     public boolean validateToken(String token, String username) {
         final String extractedUsername = extractUsername(token);
         return (extractedUsername.equals(username) && !isTokenExpired(token));
     }
 
-    // Method to check if the token has expired
     private boolean isTokenExpired(String token) {
         return extractAllClaims(token).getExpiration().before(new Date());
     }

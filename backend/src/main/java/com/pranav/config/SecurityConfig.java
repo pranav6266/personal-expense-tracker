@@ -3,6 +3,7 @@ package com.pranav.config;
 import com.pranav.security.JwtAuthFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -38,13 +39,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
-        // Enable CORS support so MVC CORS mappings are respected by Spring Security
-        http.cors().and()
+        // Enable CORS so the WebConfig mappings are applied by Spring Security
+        http.cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authz ->
-                        authz.requestMatchers("/signup", "/login").permitAll()
+                        authz.requestMatchers("/signup", "/login", "/actuator/health/**").permitAll()
                                 .requestMatchers("/admin/**").hasRole("ADMIN")
                                 // Allow both USER and ADMIN roles to access non-admin endpoints
                                 .anyRequest().hasAnyRole("USER", "ADMIN")
