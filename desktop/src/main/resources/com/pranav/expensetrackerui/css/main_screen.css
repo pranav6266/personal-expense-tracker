@@ -139,3 +139,9 @@
     -fx-background-color: #b2dfdb;
     -fx-text-fill: #000000;
 }
+
+/* Income amounts read green in the expenses table */
+.expense-table .table-cell.amount-income {
+    -fx-text-fill: #15803d;
+    -fx-font-weight: bold;
+}

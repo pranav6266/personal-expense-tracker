@@ -45,24 +45,26 @@
         <VBox spacing="20" styleClass="expense-table-container" HBox.hgrow="ALWAYS">
             <Label text="Expenses" styleClass="expenses-header" />
             <TableView fx:id="expenseTable" styleClass="expense-table">
+                <columns>
 
                 <!-- Category Column -->
-                <TableColumn fx:id="categoryColumn" text="Category" />
+                <TableColumn fx:id="categoryColumn" prefWidth="110" text="Category" />
 
                 <!-- Description Column -->
-                <TableColumn fx:id="descriptionColumn" text="Description" />
+                <TableColumn fx:id="descriptionColumn" prefWidth="210" text="Description" />
 
                 <!-- Amount Column -->
-                <TableColumn fx:id="amountColumn" text="Amount" />
+                <TableColumn fx:id="amountColumn" prefWidth="110" text="Amount" />
 
                 <!-- Date Column -->
-                <TableColumn fx:id="dateColumn" text="Date" />
+                <TableColumn fx:id="dateColumn" prefWidth="100" text="Date" />
 
                 <!-- Edit Column -->
-                <TableColumn fx:id="editColumn" text="Edit" />
+                <TableColumn fx:id="editColumn" prefWidth="70" text="Edit" />
 
                 <!-- Delete Column -->
-                <TableColumn fx:id="deleteColumn" text="Delete" />
+                <TableColumn fx:id="deleteColumn" prefWidth="80" text="Delete" />
+                </columns>
             </TableView>
         </VBox>
     </HBox>

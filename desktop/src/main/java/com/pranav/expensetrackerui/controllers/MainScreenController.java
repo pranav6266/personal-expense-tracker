@@ -17,10 +17,14 @@ import javafx.stage.Stage;
 import javafx.util.Callback;
 
 import java.io.IOException;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
 
 public class MainScreenController {
+    private static final NumberFormat RUPEES = NumberFormat.getCurrencyInstance(Locale.of("en", "IN"));
+
 
     @FXML
     private DatePicker datePicker;
@@ -67,18 +71,31 @@ public class MainScreenController {
         categoryColumn.setCellValueFactory(new PropertyValueFactory<>("category"));
         descriptionColumn.setCellValueFactory(new PropertyValueFactory<>("note"));
         amountColumn.setCellValueFactory(new PropertyValueFactory<>("amount"));
+        amountColumn.setCellFactory(column -> new TableCell<>() {
+            @Override
+            protected void updateItem(Double amount, boolean empty) {
+                super.updateItem(amount, empty);
+                Expense expense = empty ? null : getTableRow().getItem();
+                if (amount == null || expense == null) {
+                    setText(null);
+                    getStyleClass().removeAll("amount-income");
+                    return;
+                }
+                boolean income = expense.getExpenseType() == 1;
+                setText((income ? "+" : "") + RUPEES.format(amount));
+                if (income) {
+                    if (!getStyleClass().contains("amount-income")) getStyleClass().add("amount-income");
+                } else {
+                    getStyleClass().removeAll("amount-income");
+                }
+            }
+        });
+        amountColumn.setStyle("-fx-alignment: CENTER-RIGHT;");
         dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
 
-        // Add Edit and Delete buttons in each row
+        // Add Edit and Delete buttons in each row (the columns themselves are declared in MainScreen.fxml)
         addEditButtonToTable();
         addDeleteButtonToTable();
-
-        expenseTable.getColumns().add(categoryColumn);
-        expenseTable.getColumns().add(descriptionColumn);
-        expenseTable.getColumns().add(amountColumn);
-        expenseTable.getColumns().add(dateColumn);
-        expenseTable.getColumns().add(editColumn);
-        expenseTable.getColumns().add(deleteColumn);
 
         // Fetch expenses for the current date
         fetchExpensesByDate(currentDate.toString());
